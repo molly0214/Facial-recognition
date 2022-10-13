@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewData["Title"] = "FaceDetect";
+}
+
+<h1>FaceDetect</h1>
+
+<div class="container">
+    <div class="form-group">
+        <label>請輸入圖片網址 : </label>
+        <input id="faceurl" value="https://insights.osu.edu/sites/default/files/styles/standard_large/public/media/image/2017/07/not-face.jpg" />
+    </div>
+    <div class="form-group">
+        <img id="face" src="~/images/admin.png" style="width:500px;height:500px"/>
+    </div>
+    <div class="form-group">
+        <button onclick="faceDetect()">偵測</button>
+    </div>
+
+</div>
+
+    @section Scripts{
+        <script>
+            function faceDetect() {
+                $("#face").attr(`src`, $(`#faceurl`).val());
+
+                var params = {
+                    "returnFaceId": "true",
+                    "returnFaceLandmarks": "false",
+                    "returnFaceAttributes": "age,gender,emotion",
+                    "recognitionModel": "recognition_04",
+                    "returnRecognitionModel": "false",
+                    "detectionModel": "detection_01",
+                    "faceIdTimeToLive": "86400",
+                };
+                var data = {
+                    url: $("#faceurl").val()
+                };
+
+
+                $.ajax({
+                    url: "https://msit143000face.cognitiveservices.azure.com/face/v1.0/detect?" + $.param(params),
+                    beforeSend: function (xhrObj) {
+                        // Request headers
+                        xhrObj.setRequestHeader("Content-Type", "application/json");
+                        xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", "3176efd4c2014aa7903981e7d0c143b6");
+                    },
+                    type: "POST",
+                    // Request body
+                    data: JSON.stringify(data),
+                })
+                    .done(function (data) {
+                    /*alert(JSON.stringify(data));*/
+                        var gender = data[0]["faceAttributes"]["gender"];
+                        var age = data[0]["faceAttributes"]["age"];
+                        var emotion = data[0]["faceAttributes"]["emotion"];
+                        var maxEmotion = 0;
+                        var maxEmotionName = "";
+                        $.each(emotion, function (name, value) {
+                            if (value > maxEmotion) {
+                                maxEmotion = value;
+                                maxEmotionName = name;
+                            }
+                        });
+                        alert(`性別:${gender},年齡:${age} 情緒:${Maxemotion} 信心指數:${(Maxemotion * 100).toFixed(2)}%`)
+                    }).fail(function (err) {
+                        alert(err.responseText);
+
+
+
+
+
+
+
+
+
+
+
+            }
+        </script>
+    }
+
+
+
+
+
+
+
+
