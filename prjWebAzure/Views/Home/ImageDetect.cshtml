@@ -4,4 +4,59 @@
 }
 
 <h1>ImageDetect</h1>
+<div class="container">
+    <div class="form-group">
+        <label>請輸入圖片網址 : </label>
+        <input id="imageurl" value="https://www.thedelite.com/wp-content/uploads/2016/10/14241401_2069191543220105_3132952298437416536_o.jpg" />
+    </div>
+    <div class="form-group">
+        <img id="image" src="~/images/No-Image-Placeholder.png.png" style="width:500px;height:500px" />
+    </div>
+    <div class="form-group">
+        <button onclick="imageDetect()">偵測</button>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function imageDetect() {
+            $("#image").attr(`src`, $(`#imageurl`).val());
+            var params = {
+                    "visualFeatures" : "Description",
+                    "language": "en",
+                    "model-version" :"latest",
+                };
+                var data = {
+                    url: $("#imageurl").val()
+                };
+
+                $.ajax({
+                    url: "https://msit143000.cognitiveservices.azure.com/vision/v3.2/analyze?" + $.param(params),
+                    beforeSend: function (xhrObj) {
+                        xhrObj.setRequestHeader("Content-Type", "application/json");
+                        xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", "07098e65bc9a43418c2f47d9b796aeca");
+                    },
+                    type: "POST",
+                    data: JSON.stringify(data),
+                })
+                    .done(function (data) {
+                       var text = Convert.ToString(ImageContent["description"]["caption"][0]["text"]);
+                        var confident = Convert.ToSingle(ImageContent["description"]["caption"][0]["confident"]);
+                        alert(`內容:${text},信心指數:${(confident * 100).toFixed(2)}%`)
+                    }).fail(function (err) {
+                        alert(err.responseText);
+
+
+
+
+
+
+
+
+
+
+
+            }
+    </script>
+}
 
